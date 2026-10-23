@@ -1,0 +1,26 @@
+<div class="wrap">
+  <h1>Lost &amp; Found</h1>
+  <p class="stats" id="stats"></p>
+  <form id="itemForm" novalidate>
+    <label class="full">Status
+      <select id="status"><option value="lost">I lost it</option><option value="found">I found 
+        it</option></select>
+    </label>
+    <label>Item name<input id="name" placeholder="Black backpack"></label>
+    <label>Category
+      <select id="category"><option>Bag</option><option>Electronics</option><option>ID / 
+        Cards</option><option>Keys</option><option>Books</option><option>Other</option></select>
+    </label>
+    <label>Location<input id="location" placeholder="Library, 2nd floor"></label>
+    <label>Contact<input id="contact" placeholder="you@college.edu"></label>
+    <label class="full">Description<textarea id="desc"></textarea></label>
+    <div class="full"><button type="submit">Post item</button> <span class="err" id="err" 
+      role="alert"></span></div>
+  </form>
+  <div class="tools">
+    <input id="search" type="search" placeholder="Search items">
+    <select id="fStatus"><option value="all">All</option><option value="lost">Lost</option><option 
+      value="found">Found</option><option value="claimed">Claimed</option></select>
+  </div>
+  <div class="grid" id="list"></div>
+</div>
