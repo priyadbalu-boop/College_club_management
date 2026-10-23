@@ -1,0 +1,42 @@
+onst $ = id => document.getElementById(id);
+let items = [];
+try { items = JSON.parse(localStorage.getItem("items")) || []; } catch (e) {}
+const save = () => { try { localStorage.setItem("items", JSON.stringify(items)); } catch (e) {} };
+const esc = s => s.replace(/[&<>"']/g, c => "&#" + c.charCodeAt(0) + ";");
+function render() {
+  const q = $("search").value.toLowerCase(), f = $("fStatus").value;
+  const shown = items.filter(i => (f === "all" || i.status === f) &&
+    (i.name + i.location + i.desc).toLowerCase().includes(q));
+  const n = s => items.filter(i => i.status === s).length;
+  $("stats").textContent = `Lost: ${n("lost")} | Found: ${n("found")} | Claimed: ${n("claimed")}`;
+  $("list").innerHTML = shown.map(i => `
+    <div class="card ${i.status}">
+      <b>${i.status.toUpperCase()}</b>
+      <h3>${esc(i.name)}</h3>
+      <p>${esc(i.category)} · ${esc(i.location)}</p>
+      <p>${esc(i.desc)}</p>
+      <p>Contact: ${esc(i.contact)}</p>
+      ${i.status !== "claimed" ? `<button data-act="claim" data-id="${i.id}">Mark as claimed</button>` : ""}
+      <button data-act="del" data-id="${i.id}">Delete</button>
+    </div>`).join("") || "<p>No items yet.</p>";
+}
+$("itemForm").onsubmit = e => {
+  e.preventDefault();
+  const name = $("name").value.trim(), location = $("location").value.trim(), contact = 
+    $("contact").value.trim();
+  if (!name || !location || !contact) { $("err").textContent = "Name, location and contact are required."; 
+    return; }
+  $("err").textContent = "";
+  items.push({ id: Date.now(), status: $("status").value, name, location, contact,
+               category: $("category").value, desc: $("desc").value.trim() });
+  save(); render(); e.target.reset();
+};
+$("list").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const id = +b.dataset.id;
+  items = b.dataset.act === "del" ? items.filter(i => i.id !== id)
+        : items.map(i => i.id === id ? { ...i, status: "claimed" } : i);
+  save(); render();
+};
+$("search").oninput = $("fStatus").oninput = render;
+render();
